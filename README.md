@@ -1,4 +1,4 @@
-# Elendirna — 기본 설계 문서 v0
+# Elendirna
 
 > Agent-friendly knowledge base CLI, inspired by ELF (Eli's Lab Framework).
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 0. 문서의 목적
+## 0. 목적
 
 Elendirna는 ELF의 철학적 코어를 계승하되, **개인 지식 보존 + AI 워크플로 자동화**를 1차 목적으로 재구성한 별개 구현체이다. 본 문서는 v0.1 MVP 착수 전 설계 합의를 위한 기준 문서이며, 구현이 진행됨에 따라 ADR(Architecture Decision Record)을 통해 업데이트된다.
 
