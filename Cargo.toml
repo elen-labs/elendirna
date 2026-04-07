@@ -2,6 +2,12 @@
 name = "elendirna"
 version = "0.1.0"
 edition = "2024"
+description = "Agent-friendly knowledge base CLI. Manages personal knowledge as Base-Delta entries with AI-enforced conventions."
+license = "MIT"
+repository = "https://github.com/RainyLens/elendirna"
+readme = "README.md"
+keywords = ["knowledge-base", "cli", "ai", "notes", "markdown"]
+categories = ["command-line-utilities"]
 
 [lib]
 name = "elendirna"
