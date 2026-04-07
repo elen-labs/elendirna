@@ -1,0 +1,28 @@
+[package]
+name = "elendirna"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "elendirna"
+path = "src/lib.rs"
+
+[[bin]]
+name = "elf"
+path = "src/main.rs"
+
+[dependencies]
+clap        = { version = "4", features = ["derive"] }
+toml        = "0.8"
+serde       = { version = "1", features = ["derive"] }
+serde_json  = "1"
+thiserror   = "1"
+anyhow      = "1"
+chrono      = { version = "0.4", features = ["serde"] }
+walkdir     = "2"
+regex       = "1"
+
+[dev-dependencies]
+insta       = { version = "1", features = ["toml"] }
+tempfile    = "3"
+assert_cmd  = "2"
