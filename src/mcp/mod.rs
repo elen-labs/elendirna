@@ -277,6 +277,7 @@ impl ElfMcpServer {
     }
 }
 
+#[rmcp::tool_handler]
 impl ServerHandler for ElfMcpServer {
     fn get_info(&self) -> ServerInfo {
         ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
