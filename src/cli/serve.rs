@@ -1,6 +1,7 @@
-/// `elf serve --mcp` — MCP 서버 진입점 (Phase 6에서 구현)
+/// `elf serve --mcp` — MCP 서버 진입점
 use clap::Args;
 use crate::error::ElfError;
+use crate::vault;
 
 #[derive(Debug, Args)]
 pub struct ServeArgs {
@@ -20,7 +21,14 @@ pub fn run(args: ServeArgs) -> Result<(), ElfError> {
         });
     }
 
-    // Phase 6에서 구현: MCP 서버 시작
-    eprintln!("MCP 서버는 Phase 6에서 구현 예정입니다.");
-    Ok(())
+    let vault_root = match args.vault {
+        Some(path) => path,
+        None => {
+            let cwd = std::env::current_dir()?;
+            vault::find_vault_root(&cwd)?
+        }
+    };
+
+    crate::mcp::run_stdio(vault_root)
+        .map_err(|e| ElfError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))
 }

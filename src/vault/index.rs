@@ -71,6 +71,7 @@ pub fn rebuild(vault_root: &Path) -> Result<usize, ElfError> {
     let entries = Entry::find_all(vault_root);
     let count = entries.len();
 
+    // 1단계: entries / tags / revisions 삽입
     for entry in &entries {
         let m = &entry.manifest;
         conn.execute(
@@ -94,13 +95,6 @@ pub fn rebuild(vault_root: &Path) -> Result<usize, ElfError> {
             ).map_err(|e| ElfError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?;
         }
 
-        for link in &m.links {
-            conn.execute(
-                "INSERT OR IGNORE INTO links (from_id, to_id) VALUES (?1, ?2)",
-                params![m.id, link],
-            ).map_err(|e| ElfError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?;
-        }
-
         if let Some(entry_id) = crate::vault::id::EntryId::from_str(&m.id) {
             for rev in Revision::list(vault_root, &entry_id) {
                 conn.execute(
@@ -114,6 +108,17 @@ pub fn rebuild(vault_root: &Path) -> Result<usize, ElfError> {
                     ],
                 ).map_err(|e| ElfError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?;
             }
+        }
+    }
+
+    // 2단계: links 삽입 (양쪽 entry가 먼저 존재해야 함)
+    for entry in &entries {
+        let m = &entry.manifest;
+        for link in &m.links {
+            conn.execute(
+                "INSERT OR IGNORE INTO links (from_id, to_id) VALUES (?1, ?2)",
+                params![m.id, link],
+            ).map_err(|e| ElfError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?;
         }
     }
 
