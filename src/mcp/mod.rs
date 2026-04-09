@@ -11,8 +11,23 @@ use rmcp::{
     ServiceExt,
 };
 use schemars::JsonSchema;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::vault::ops;
+
+/// MCP tool 출력 타입.
+/// `serde_json::Value`를 그대로 직렬화하되, outputSchema는 항상
+/// `{"type":"object"}`로 보고 — MCP spec 준수용.
+#[derive(Serialize)]
+#[serde(transparent)]
+struct Out(serde_json::Value);
+
+impl JsonSchema for Out {
+    fn schema_name() -> std::borrow::Cow<'static, str> { "Out".into() }
+    fn schema_id()   -> std::borrow::Cow<'static, str> { "Out".into() }
+    fn json_schema(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        schemars::json_schema!({"type": "object"})
+    }
+}
 
 pub struct ElfMcpServer {
     vault_root: PathBuf,
@@ -102,7 +117,7 @@ impl ElfMcpServer {
     fn entry_list(
         &self,
         Parameters(p): Parameters<EntryListParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let mut entries = ops::entry_list(&self.vault_root);
         if let Some(ref tag) = p.tag {
             entries.retain(|e| e.manifest.tags.contains(tag));
@@ -117,17 +132,17 @@ impl ElfMcpServer {
             "tags":    e.manifest.tags,
             "created": e.manifest.created,
         })).collect();
-        Ok(Json(serde_json::json!({ "ok": true, "entries": out })))
+        Ok(Json(Out(serde_json::json!({ "ok": true, "entries": out }))))
     }
 
     #[tool(description = "entry 내용 조회 (manifest + note body).")]
     fn entry_show(
         &self,
         Parameters(p): Parameters<EntryShowParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let r = ops::entry_show(&self.vault_root, &p.id)
             .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-        Ok(Json(serde_json::json!({
+        Ok(Json(Out(serde_json::json!({
             "ok": true,
             "manifest": {
                 "id":       r.entry.manifest.id,
@@ -140,47 +155,47 @@ impl ElfMcpServer {
                 "updated":  r.entry.manifest.updated,
             },
             "note": r.note_body,
-        })))
+        }))))
     }
 
     #[tool(description = "새 entry 생성.")]
     fn entry_new(
         &self,
         Parameters(p): Parameters<EntryNewParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let r = ops::entry_new(
             &self.vault_root,
             &p.title,
             p.baseline.as_deref(),
             p.tags.unwrap_or_default(),
         ).map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-        Ok(Json(serde_json::json!({
+        Ok(Json(Out(serde_json::json!({
             "ok": true,
             "id":    r.entry.manifest.id,
             "title": r.entry.manifest.title,
-        })))
+        }))))
     }
 
     #[tool(description = "entry에 revision(delta) 추가.")]
     fn revision_add(
         &self,
         Parameters(p): Parameters<RevisionAddParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let r = ops::revision_add(&self.vault_root, &p.id, &p.delta)
             .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-        Ok(Json(serde_json::json!({
+        Ok(Json(Out(serde_json::json!({
             "ok":       true,
             "entry_id": r.revision.entry_id.to_string(),
             "rev_id":   r.revision.rev_id.to_string(),
             "baseline": r.revision.baseline.to_string(),
-        })))
+        }))))
     }
 
     #[tool(description = "entry + revision chain + linked entries 수집. 세션 간 컨텍스트 복원에 사용.")]
     fn bundle(
         &self,
         Parameters(p): Parameters<BundleParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let b = ops::bundle(&self.vault_root, &p.id)
             .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
         let revs: Vec<_> = b.revisions.iter().map(|r| serde_json::json!({
@@ -194,7 +209,7 @@ impl ElfMcpServer {
             "title": le.entry.manifest.title,
             "note":  le.note_body,
         })).collect();
-        Ok(Json(serde_json::json!({
+        Ok(Json(Out(serde_json::json!({
             "ok": true,
             "manifest": {
                 "id":       b.entry.manifest.id,
@@ -206,14 +221,14 @@ impl ElfMcpServer {
             "note":      b.note_body,
             "revisions": revs,
             "linked":    linked,
-        })))
+        }))))
     }
 
     #[tool(description = "sqlite 인덱스 기반 entry 검색.")]
     fn query(
         &self,
         Parameters(p): Parameters<QueryParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let filter = crate::vault::index::QueryFilter {
             tag:            p.tag,
             status:         p.status,
@@ -228,14 +243,14 @@ impl ElfMcpServer {
             "status":  r.status,
             "created": r.created,
         })).collect();
-        Ok(Json(serde_json::json!({ "ok": true, "entries": out })))
+        Ok(Json(Out(serde_json::json!({ "ok": true, "entries": out }))))
     }
 
     #[tool(description = "세션 요약을 sync.jsonl에 기록. 세션 간 핸드오프 로그.")]
     fn sync_record(
         &self,
         Parameters(p): Parameters<SyncRecordParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         ops::sync_record(
             &self.vault_root,
             &p.summary,
@@ -243,22 +258,22 @@ impl ElfMcpServer {
             p.entries.unwrap_or_default(),
             p.session_id,
         ).map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-        Ok(Json(serde_json::json!({ "ok": true })))
+        Ok(Json(Out(serde_json::json!({ "ok": true }))))
     }
 
     #[tool(description = "vault 무결성 검사 + index.sqlite 재생성.")]
     fn validate(
         &self,
         Parameters(_p): Parameters<ValidateParams>,
-    ) -> Result<Json<serde_json::Value>, ErrorData> {
+    ) -> Result<Json<Out>, ErrorData> {
         let result = crate::schema::validate::run_all(&self.vault_root)
             .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
         let _ = crate::vault::index::rebuild(&self.vault_root);
-        Ok(Json(serde_json::json!({
+        Ok(Json(Out(serde_json::json!({
             "ok":       result.error_count() == 0,
             "errors":   result.error_count(),
             "warnings": result.warning_count(),
-        })))
+        }))))
     }
 }
 
