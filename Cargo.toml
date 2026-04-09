@@ -28,6 +28,11 @@ chrono      = { version = "0.4", features = ["serde"] }
 walkdir     = "2"
 regex       = "1"
 
+# v0.2: MCP 서버
+rmcp        = { version = "1", features = ["server", "macros", "schemars", "transport-io"] }
+tokio       = { version = "1", features = ["full"] }
+schemars    = "0.8"
+
 [dev-dependencies]
 insta       = { version = "1", features = ["toml"] }
 tempfile    = "3"
