@@ -40,8 +40,14 @@ enum Commands {
     /// sqlite 인덱스 기반 entry 검색
     Query(cli::query::QueryArgs),
 
+    /// entry 의존 그래프 export (DOT / Mermaid / JSON)
+    Graph(cli::graph::GraphArgs),
+
     /// MCP 서버 구동 (v0.2)
     Serve(cli::serve::ServeArgs),
+
+    /// sync.jsonl 세션 핸드오프 로그 관리 (v0.2)
+    Sync(cli::sync::SyncArgs),
 }
 
 fn main() {
@@ -54,7 +60,9 @@ fn main() {
         Commands::Validate(args) => cli::validate::run(args),
         Commands::Bundle(args)   => cli::bundle::run(args),
         Commands::Query(args)    => cli::query::run(args),
+        Commands::Graph(args)    => cli::graph::run(args),
         Commands::Serve(args)    => cli::serve::run(args),
+        Commands::Sync(args)     => cli::sync::run(args),
     };
 
     if let Err(e) = result {

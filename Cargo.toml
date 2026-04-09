@@ -31,7 +31,7 @@ regex       = "1"
 # v0.2: MCP 서버
 rmcp        = { version = "1", features = ["server", "macros", "schemars", "transport-io"] }
 tokio       = { version = "1", features = ["full"] }
-schemars    = "0.8"
+schemars    = "1"
 
 # v0.2: sqlite 인덱스
 rusqlite    = { version = "0.39", features = ["bundled"] }
