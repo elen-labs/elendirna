@@ -1,6 +1,6 @@
 # Elendirna — 설계 문서
 
-> 동기, 철학, 아키텍처 결정을 기록합니다. 구현 로드맵은 [milestones/ROADMAP.md](milestones/ROADMAP.md)를 참조하세요.
+> 동기, 철학, 아키텍처 결정을 기록합니다. 구현 로드맵은 → see N0004 (ROADMAP)를 참조하세요.
 
 ---
 
@@ -128,6 +128,20 @@ Exit code 카테고리:
 
 단, vault에 AI 생성 텍스트가 **아예** 들어가지 않는 것은 아니다. AI가 `sync record`나 `revision add`를 CLI로 호출할 때 그 내용(요약, delta)은 AI가 생성한 텍스트다. 정확한 불변식은 이것이다: **CLI는 AI를 호출하지 않는다. AI 생성 텍스트가 vault에 들어오는 유일한 경로는 AI가 CLI를 호출하는 것이다.** CLI에 AI API 의존성이 없으므로 offline/air-gapped 환경에서도 동작하고, 어떤 AI가 생성했든 동일한 스키마 검증을 통과해야 한다.
 
+### 3.5 MCP 도구 설명 규칙 (Convention)
+
+MCP 서버에 등록되는 모든 도구의 `description`에는 **기능 설명**과 **호출 시점(트리거 조건)**을 반드시 함께 명시한다.
+
+```
+✅ "새로운 아이디어/주제가 대화에서 등장했을 때 호출하여 entry를 생성합니다"
+❌ "entry를 생성합니다"
+```
+
+근거:
+- 에이전트는 도구의 존재를 아는 것과 적시에 쓰는 것이 다르다
+- 트리거 조건이 도구 설명에 내장되면, CLAUDE.md 같은 정적 파일 없이도 에이전트가 워크플로를 자동 이해한다
+- 이 규칙은 MCP 도구를 추가/수정하는 모든 기여자(사람/AI)에게 적용된다
+
 ---
 
 ## 4. Human-readability 보증
@@ -149,7 +163,7 @@ Exit code 카테고리:
 - `config.toml`의 `schema_version`이 절대 기준
 - 마이너 변경은 backward-compatible field 추가만 허용
 - 메이저 변경은 `elf migrate --to N`으로 마이그레이션. 항상 `revisions/.backup-vN/` 생성
-- 스키마 변화는 `docs/adr/`에 ADR로 기록
+- 스키마 변화는 `tags: [decision, architecture]`를 가진 Entry로 기록 (별도 `docs/adr/` 디렉터리 불필요 — → see N0018 §3-A)
 - CLI 메이저 버전과 schema_version은 정렬 (CLI v2.x ↔ schema v2)
 
 ---
