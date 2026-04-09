@@ -34,6 +34,9 @@ enum Commands {
     /// vault 무결성 검사
     Validate(cli::validate::ValidateArgs),
 
+    /// entry + revision chain + linked entries export (AI 컨텍스트용)
+    Bundle(cli::bundle::BundleArgs),
+
     /// MCP 서버 구동 (v0.2)
     Serve(cli::serve::ServeArgs),
 }
@@ -46,6 +49,7 @@ fn main() {
         Commands::Revision(args) => run_revision(args),
         Commands::Link(args)     => cli::link::run(args),
         Commands::Validate(args) => cli::validate::run(args),
+        Commands::Bundle(args)   => cli::bundle::run(args),
         Commands::Serve(args)    => cli::serve::run(args),
     };
 

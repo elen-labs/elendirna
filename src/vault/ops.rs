@@ -111,6 +111,45 @@ pub fn revision_list(vault_root: &Path, entry_id_str: &str) -> Result<Vec<Revisi
     Ok(Revision::list(vault_root, &entry_id))
 }
 
+// ─── bundle ──────────────────────────────
+
+pub struct LinkedEntry {
+    pub entry: Entry,
+    pub note_body: String,
+}
+
+pub struct BundleOutput {
+    pub entry: Entry,
+    pub note_body: String,
+    pub revisions: Vec<Revision>,
+    pub linked: Vec<LinkedEntry>, // depth=1 linked entries
+}
+
+/// entry + revision chain + linked entries(depth=1) 수집.
+/// readable 합성은 호출자(CLI 출력 or MCP tool)가 담당.
+pub fn bundle(vault_root: &Path, id_str: &str) -> Result<BundleOutput, ElfError> {
+    let id = EntryId::from_str(id_str).ok_or_else(|| ElfError::InvalidInput {
+        message: format!("'{id_str}' 는 유효한 entry ID가 아닙니다"),
+    })?;
+    let entry = Entry::find_by_id(vault_root, &id)
+        .ok_or_else(|| ElfError::NotFound { id: id_str.to_string() })?;
+
+    let note_body = entry.note_body().unwrap_or_default();
+    let revisions = Revision::list(vault_root, &id);
+
+    let mut linked = vec![];
+    for link_id_str in &entry.manifest.links {
+        if let Some(lid) = EntryId::from_str(link_id_str) {
+            if let Some(le) = Entry::find_by_id(vault_root, &lid) {
+                let lb = le.note_body().unwrap_or_default();
+                linked.push(LinkedEntry { entry: le, note_body: lb });
+            }
+        }
+    }
+
+    Ok(BundleOutput { entry, note_body, revisions, linked })
+}
+
 // ─── link ────────────────────────────────
 
 /// 양방향 링크 추가. 이미 존재하면 no-op.
