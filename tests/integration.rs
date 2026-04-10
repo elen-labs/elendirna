@@ -7,14 +7,11 @@ use elendirna::cli::entry::{NewArgs, ShowArgs, run_new, run_show};
 use elendirna::cli::init::{InitArgs, run as init_run};
 use elendirna::cli::link::{LinkArgs, run as link_run};
 use elendirna::cli::revision::{AddArgs, RevisionArgs, RevisionCommand, run as rev_run};
-use elendirna::cli::validate::{ValidateArgs, run as validate_run};
 use elendirna::schema::manifest::Manifest;
 use elendirna::schema::validate::run_all;
 use elendirna::vault::entry::Entry;
-use elendirna::vault::revision::Revision;
 use elendirna::vault::id::EntryId;
 
-use std::path::Path;
 use tempfile::TempDir;
 
 static CWD_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());

@@ -103,8 +103,11 @@ fn format_revision_file(baseline: &EntryRevRef, created: DateTime<Utc>, delta: &
 /// revision 파일 파싱
 fn parse_revision_file(entry_id: EntryId, rev_id: RevisionId, content: &str) -> Option<Revision> {
     // frontmatter 추출
-    let content = content.strip_prefix("---\n")?;
-    let (fm_raw, rest) = content.split_once("\n---\n")?;
+    let content = content.strip_prefix("---\r\n").or_else(|| content.strip_prefix("---\n"))?;
+    let marker_idx = content.find("\n---")?;
+    let fm_raw = &content[..marker_idx];
+    let after_marker = &content[marker_idx + 4..];
+    let rest = after_marker.strip_prefix("\r\n").or_else(|| after_marker.strip_prefix("\n"))?;
 
     let mut baseline_str = String::new();
     let mut created_str = String::new();
