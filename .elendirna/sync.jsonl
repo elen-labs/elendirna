@@ -1,0 +1,46 @@
+{"action":"vault.init","agent":"human","ts":"2026-04-09T15:37:44.471442700+00:00"}
+{"action":"entry.new","agent":"human","id":"N0001","ts":"2026-04-09T15:38:13.586585600+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"루트 디렉터리(.)로 Vault 재생성 및 N0001 정리 이관","ts":"2026-04-09T15:38:28.441511700+00:00"}
+{"action":"entry.new","agent":"human","id":"N0002","ts":"2026-04-09T15:42:12.810569600+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"vault 마이그레이션(export/merge) 편의성 향상 기능에 대한 아이디어 노드를 N0002로 추가","ts":"2026-04-09T15:43:08.183158200+00:00"}
+{"action":"entry.new","agent":"human","id":"N0003","ts":"2026-04-09T15:46:20.213289800+00:00"}
+{"action":"entry.new","agent":"human","id":"N0004","ts":"2026-04-09T15:46:20.380985600+00:00"}
+{"action":"entry.new","agent":"human","id":"N0005","ts":"2026-04-09T15:46:20.543690900+00:00"}
+{"action":"entry.new","agent":"human","id":"N0006","ts":"2026-04-09T15:46:20.702854100+00:00"}
+{"action":"entry.new","agent":"human","id":"N0007","ts":"2026-04-09T15:46:20.857322200+00:00"}
+{"action":"entry.new","agent":"human","id":"N0008","ts":"2026-04-09T15:46:21.010706600+00:00"}
+{"action":"entry.new","agent":"human","id":"N0009","ts":"2026-04-09T15:46:21.167269+00:00"}
+{"action":"entry.new","agent":"human","id":"N0010","ts":"2026-04-09T15:46:21.323601900+00:00"}
+{"action":"entry.new","agent":"human","id":"N0011","ts":"2026-04-09T15:46:21.483630400+00:00"}
+{"action":"entry.new","agent":"human","id":"N0012","ts":"2026-04-09T15:46:21.646236100+00:00"}
+{"action":"entry.new","agent":"human","id":"N0013","ts":"2026-04-09T15:46:21.799774800+00:00"}
+{"action":"entry.new","agent":"human","id":"N0014","ts":"2026-04-09T15:46:21.957246700+00:00"}
+{"action":"entry.new","agent":"human","id":"N0015","ts":"2026-04-09T15:46:22.112874800+00:00"}
+{"action":"entry.new","agent":"human","id":"N0016","ts":"2026-04-09T15:46:22.269198500+00:00"}
+{"action":"entry.new","agent":"human","id":"N0017","ts":"2026-04-09T15:46:22.424298500+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"옵션 1(Dogfooding) 적용: milestones 폴더 내 설계 문서를 공식 루트 Vault의 Entry로 모두 이관 완료","ts":"2026-04-09T15:46:22.611890+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"milestones 이하 문서들을 모두 root vault에 매핑 및 내용 삽입 성공","ts":"2026-04-09T15:47:33.125080800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0011","ts":"2026-04-09T15:50:56.254957400+00:00"}
+{"action":"link.N0011.N0013","agent":"human","ts":"2026-04-09T15:52:37.734828500+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"N0011(PLAN v0.1)과 N0013(PLAN v0.2)의 연관 관계를 link로 연결","ts":"2026-04-09T15:52:49.989082300+00:00"}
+{"action":"entry.new","agent":"human","id":"N0018","ts":"2026-04-09T16:19:03.735706400+00:00"}
+{"action":"link.N0018.N0004","agent":"human","ts":"2026-04-09T16:21:03.724077200+00:00"}
+{"action":"link.N0018.N0013","agent":"human","ts":"2026-04-09T16:21:03.884941800+00:00"}
+{"action":"link.N0018.N0002","agent":"human","ts":"2026-04-09T16:21:04.040056200+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"v0.3 논의 사항 정리: 버그픽스, 기능제안(export/merge, init --local-only, MCP auto-inject, SSE), 설계결정(ADR→Entry 흡수, dogfooding) 통합 기록","ts":"2026-04-09T16:21:04.205495600+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:26:47.908336700+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"N0018에 설계 결정 3-C 추가: CLAUDE.md를 MCP 프로토콜 계층으로 대체하는 3단계 전략 (도구 설명 트리거, server.description, elf help --json)","ts":"2026-04-09T16:27:45.579795200+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:30:03.685093800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:34:42.754685900+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:35:35.442657800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:37:00.452605200+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T16:56:13.067536500+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"DESIGN.md에 이번 세션 합의 3건 반영: (1) §3.5 MCP 도구 설명 규칙 신설 (2) §5 ADR→Entry 흡수 반영 (3) milestones 참조를 vault entry 참조로 변경","ts":"2026-04-09T16:58:47.377966+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T17:10:57.241110800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-09T17:13:13.540837500+00:00"}
+{"action":"entry.new","agent":"human","id":"N0019","ts":"2026-04-09T17:14:34.599870100+00:00"}
+{"action":"link.N0019.N0018","agent":"human","ts":"2026-04-09T17:14:44.204628500+00:00"}
+{"action":"link.N0019.N0013","agent":"human","ts":"2026-04-09T17:14:44.358467900+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"N0019 (PLAN v0.3) 작성 완료. 4개 Phase, 7개 항목, 4개 성공 기준. N0018(논의), N0013(v0.2 계획)과 링크 연결.","ts":"2026-04-09T17:15:38.376763500+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"demo_vault를 tests/fixtures/demo_vault로 이동. 루트 vault가 실전 데모 역할을 대체하므로 demo_vault는 테스트 전용으로 격하.","ts":"2026-04-09T17:23:10.840708500+00:00"}
+{"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"thiserror 1 → 2 업그레이드 완료. 63개 테스트 전통과. fix-002 재결정.","ts":"2026-04-09T22:14:50.768710500+00:00"}

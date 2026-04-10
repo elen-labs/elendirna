@@ -100,8 +100,11 @@ impl NoteFrontmatter {
     /// note.md에서 frontmatter 파싱
     /// `---\n...\n---` 경계 split 후 key-value 줄 단위 파싱
     pub fn parse(content: &str) -> Option<(Self, &str)> {
-        let content = content.strip_prefix("---\n")?;
-        let (fm_raw, rest) = content.split_once("\n---\n")?;
+        let content = content.strip_prefix("---\r\n").or_else(|| content.strip_prefix("---\n"))?;
+        let marker_idx = content.find("\n---")?;
+        let fm_raw = &content[..marker_idx];
+        let after_marker = &content[marker_idx + 4..];
+        let rest = after_marker.strip_prefix("\r\n").or_else(|| after_marker.strip_prefix("\n"))?;
         // 줄 단위 파싱
         let mut id = String::new();
         let mut title = String::new();
