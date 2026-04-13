@@ -41,7 +41,7 @@ PRAGMA foreign_keys = ON;
 ";
 
 fn index_path(vault_root: &Path) -> std::path::PathBuf {
-    vault_root.join(".elendirna").join("index.sqlite")
+    crate::vault::metadata_root(vault_root).join("index.sqlite")
 }
 
 fn open(vault_root: &Path) -> Result<Connection, ElfError> {
@@ -49,6 +49,15 @@ fn open(vault_root: &Path) -> Result<Connection, ElfError> {
     let conn = Connection::open(&path).map_err(|e| ElfError::Io(
         std::io::Error::new(std::io::ErrorKind::Other, e.to_string())
     ))?;
+
+    // v0.3.1: 동시성 강화 — WAL 모드 및 busy_timeout(5초) 설정
+    conn.execute_batch("
+        PRAGMA journal_mode = WAL;
+        PRAGMA busy_timeout = 5000;
+    ").map_err(|e| ElfError::Io(
+        std::io::Error::new(std::io::ErrorKind::Other, e.to_string())
+    ))?;
+
     conn.execute_batch(SCHEMA).map_err(|e| ElfError::Io(
         std::io::Error::new(std::io::ErrorKind::Other, e.to_string())
     ))?;

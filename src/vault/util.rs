@@ -10,7 +10,8 @@ pub fn atomic_write(path: &Path, content: &[u8]) -> Result<(), ElfError> {
     std::fs::create_dir_all(parent)?;
 
     let tmp_path = path.with_extension(format!(
-        "{}.tmp",
+        "{}.{}.tmp",
+        std::process::id(),
         path.extension().and_then(|e| e.to_str()).unwrap_or("tmp")
     ));
     std::fs::write(&tmp_path, content)?;
@@ -29,7 +30,7 @@ pub fn append_sync_event(vault_root: &Path, action: &str, id: Option<&str>) -> R
     };
     let line = format!("{}\n", event);
 
-    let path = vault_root.join(".elendirna").join("sync.jsonl");
+    let path = crate::vault::metadata_root(vault_root).join("sync.jsonl");
     use std::io::Write;
     let mut file = std::fs::OpenOptions::new()
         .create(true)
