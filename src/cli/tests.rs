@@ -18,14 +18,15 @@ mod init {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("test-vault".to_string()),
+            global: false,
         };
         run(args).unwrap();
 
         assert!(dir.path().join(".elendirna/config.toml").exists());
         assert!(dir.path().join(".elendirna/sync.jsonl").exists());
-        assert!(dir.path().join("entries").exists());
-        assert!(dir.path().join("revisions").exists());
-        assert!(dir.path().join("assets").exists());
+        assert!(dir.path().join(".elendirna/entries").exists());
+        assert!(dir.path().join(".elendirna/revisions").exists());
+        assert!(dir.path().join(".elendirna/assets").exists());
         assert!(dir.path().join("CLAUDE.md").exists());
         assert!(dir.path().join("README.md").exists());
         assert!(dir.path().join(".gitignore").exists());
@@ -38,6 +39,7 @@ mod init {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("test-vault".to_string()),
+            global: false,
         };
         run(args()).unwrap();
         let err = run(args()).unwrap_err();
@@ -52,6 +54,7 @@ mod init {
             path: dir.path().to_path_buf(),
             dry_run: true,
             name: Some("test-vault".to_string()),
+            global: false,
         };
         run(args).unwrap();
         assert!(!dir.path().join(".elendirna/config.toml").exists());
@@ -65,6 +68,7 @@ mod init {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("v".to_string()),
+            global: false,
         };
         run(args).unwrap();
         let content = std::fs::read_to_string(dir.path().join(".gitignore")).unwrap();
@@ -75,7 +79,7 @@ mod init {
     #[test]
     fn claude_md_v0_1_content() {
         let dir = tmp();
-        run(InitArgs { path: dir.path().to_path_buf(), dry_run: false, name: None }).unwrap();
+        run(InitArgs { path: dir.path().to_path_buf(), dry_run: false, name: None, global: false }).unwrap();
         let content = std::fs::read_to_string(dir.path().join("CLAUDE.md")).unwrap();
         assert!(!content.contains("elf help --json"));
         assert!(!content.contains("elf sync record"));
@@ -98,6 +102,7 @@ mod entry {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("test".to_string()),
+            global: false,
         })
         .unwrap();
         (dir, guard)
@@ -119,7 +124,7 @@ mod entry {
         let (dir, _guard) = setup_vault();
         run_new_in(&dir, "Rust Ownership").unwrap();
 
-        let entry_dir = dir.path().join("entries").join("N0001_rust_ownership");
+        let entry_dir = dir.path().join(".elendirna/entries").join("N0001_rust_ownership");
         assert!(entry_dir.join("manifest.toml").exists());
         assert!(entry_dir.join("note.md").exists());
         assert!(entry_dir.join("attachments/.gitkeep").exists());
@@ -143,7 +148,7 @@ mod entry {
         })
         .unwrap();
 
-        let entry_dir = dir.path().join("entries").join("N0002_second");
+        let entry_dir = dir.path().join(".elendirna/entries").join("N0002_second");
         let m = Manifest::read(&entry_dir).unwrap();
         assert_eq!(m.baseline, Some("N0001".to_string()));
     }
@@ -192,7 +197,7 @@ mod entry {
             json: false,
         })
         .unwrap();
-        let entry_dir = dir.path().join("entries").join("N0001_dry_test");
+        let entry_dir = dir.path().join(".elendirna/entries").join("N0001_dry_test");
         assert!(!entry_dir.exists());
     }
 }
@@ -212,6 +217,7 @@ mod revision {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("t".to_string()),
+            global: false,
         })
         .unwrap();
         std::env::set_current_dir(dir.path()).unwrap();
@@ -243,7 +249,7 @@ mod revision {
         let (dir, _guard) = setup();
         add(&dir, "첫 번째 생각 변화").unwrap();
 
-        let rev_file = dir.path().join("revisions").join("N0001").join("r0001.md");
+        let rev_file = dir.path().join(".elendirna/revisions").join("N0001").join("r0001.md");
         assert!(rev_file.exists());
         let content = std::fs::read_to_string(rev_file).unwrap();
         assert!(content.contains("baseline: N0001@r0000"));
@@ -255,7 +261,7 @@ mod revision {
         add(&dir, "첫 번째").unwrap();
         add(&dir, "두 번째").unwrap();
 
-        let rev2 = dir.path().join("revisions").join("N0001").join("r0002.md");
+        let rev2 = dir.path().join(".elendirna/revisions").join("N0001").join("r0002.md");
         assert!(rev2.exists());
         let content = std::fs::read_to_string(rev2).unwrap();
         assert!(content.contains("baseline: N0001@r0001"));
@@ -306,7 +312,7 @@ mod revision {
             }),
         })
         .unwrap();
-        assert!(!dir.path().join("revisions/N0001/r0001.md").exists());
+        assert!(!dir.path().join(".elendirna/revisions/N0001/r0001.md").exists());
     }
 }
 
@@ -326,6 +332,7 @@ mod link {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("t".to_string()),
+            global: false,
         })
         .unwrap();
         std::env::set_current_dir(dir.path()).unwrap();
@@ -357,8 +364,8 @@ mod link {
         let (dir, _guard) = setup();
         do_link(&dir, "N0001", "N0002").unwrap();
 
-        let e1 = dir.path().join("entries/N0001_alpha");
-        let e2 = dir.path().join("entries/N0002_beta");
+        let e1 = dir.path().join(".elendirna/entries/N0001_alpha");
+        let e2 = dir.path().join(".elendirna/entries/N0002_beta");
         let m1 = Manifest::read(&e1).unwrap();
         let m2 = Manifest::read(&e2).unwrap();
 
@@ -372,7 +379,7 @@ mod link {
         do_link(&dir, "N0001", "N0002").unwrap();
         do_link(&dir, "N0001", "N0002").unwrap();
 
-        let e1 = dir.path().join("entries/N0001_alpha");
+        let e1 = dir.path().join(".elendirna/entries/N0001_alpha");
         let m1 = Manifest::read(&e1).unwrap();
         let count = m1.links.iter().filter(|l| *l == "N0002").count();
         assert_eq!(count, 1);
@@ -407,6 +414,7 @@ mod link {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("t".to_string()),
+            global: false,
         })
         .unwrap();
         std::env::set_current_dir(dir.path()).unwrap();
@@ -423,7 +431,7 @@ mod link {
         do_link(&dir, "N0002", "N0003").unwrap();
         do_link(&dir, "N0001", "N0002").unwrap();
 
-        let e2 = dir.path().join("entries/N0002_b");
+        let e2 = dir.path().join(".elendirna/entries/N0002_b");
         let m2 = Manifest::read(&e2).unwrap();
         assert_eq!(m2.links, vec!["N0001", "N0003"]);
     }

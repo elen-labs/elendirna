@@ -12,6 +12,10 @@ pub struct ServeArgs {
     /// vault 경로 (기본: 현재 디렉터리에서 탐색)
     #[arg(long)]
     pub vault: Option<std::path::PathBuf>,
+
+    /// vault가 없을 경우 현재 디렉터리에 자동으로 생성
+    #[arg(long)]
+    pub auto_init: bool,
 }
 
 pub fn run(args: ServeArgs) -> Result<(), ElfError> {
@@ -27,7 +31,19 @@ pub fn run(args: ServeArgs) -> Result<(), ElfError> {
             Ok(env_path) => std::path::PathBuf::from(env_path),
             Err(_) => {
                 let cwd = std::env::current_dir()?;
-                vault::find_vault_root(&cwd)?
+                match vault::find_vault_root(&cwd) {
+                    Ok(root) => root,
+                    Err(ElfError::NotAVault) if args.auto_init => {
+                        crate::cli::init::run(crate::cli::init::InitArgs {
+                            path: cwd.clone(),
+                            dry_run: false,
+                            name: None,
+                            global: false,
+                        })?;
+                        cwd
+                    }
+                    Err(e) => return Err(e),
+                }
             }
         },
     };
