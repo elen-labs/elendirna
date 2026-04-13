@@ -57,3 +57,23 @@
 {"action":"revision.add","agent":"human","id":"N0021","ts":"2026-04-13T04:44:36.430481+00:00"}
 {"action":"revision.add","agent":"human","id":"N0017","ts":"2026-04-13T04:44:39.684814400+00:00"}
 {"action":"link.N0017.N0021","agent":"human","ts":"2026-04-13T04:44:47.551367800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0021","ts":"2026-04-13T04:49:42.830159900+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-13T05:03:08.785808+00:00"}
+{"agent":"human","entries":["N0018"],"event":"sync.record","session_id":null,"summary":"'Savepoint' 논의 마무리 및 도구 기반 탐색 효율성 지표(17 calls, 100% success)를 N0018 리비전으로 기록. 'New Entry + baseline' 방식을 표준 savepoint 워크플로로 확정.","ts":"2026-04-13T05:03:08.823311400+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-13T05:05:46.043083100+00:00"}
+{"agent":"human","entries":["N0018"],"event":"sync.record","session_id":null,"summary":"퍼포먼스 개선을 위한 '도서관 전략'(Turn Reduction, Indexing, Checkpoint) 논의. 2분 35초(17 calls)의 소요 시간을 단축하기 위한 v0.3~v0.4 아키텍처 방향성을 N0018 r0012에 기록함. '사람과 AI의 공유 기억'으로서의 정체성 재확인.","ts":"2026-04-13T05:05:46.075030200+00:00"}
+{"action":"entry.new","agent":"human","id":"N0022","ts":"2026-04-13T05:18:11.406110200+00:00"}
+{"action":"revision.add","agent":"human","id":"N0022","ts":"2026-04-13T05:18:21.023967700+00:00"}
+{"action":"entry.new","agent":"human","id":"N0023","ts":"2026-04-13T05:25:02.894401300+00:00"}
+{"action":"revision.add","agent":"human","id":"N0023","ts":"2026-04-13T05:25:09.963910700+00:00"}
+{"agent":"human","entries":["N0022","N0023","N0017"],"event":"sync.record","session_id":null,"summary":"다중 사용자(협업) 및 봇 참여 시나리오(N0022) 도출 및 관련 기술 제안(N0023, Proposal 005) 등록. 작성자(Author) 식별자 도입 및 봇의 퍼실리테이터 역할 정의.","ts":"2026-04-13T05:25:15.831124800+00:00"}
+{"action":"entry.new","agent":"human","id":"N0024","ts":"2026-04-13T05:26:24.973648500+00:00"}
+{"action":"revision.add","agent":"human","id":"N0024","ts":"2026-04-13T05:26:33.561754900+00:00"}
+{"agent":"human","entries":["N0024"],"event":"sync.record","session_id":null,"summary":"Slack/메신저 채널을 Vault(프로젝트)로 운영하는 시나리오(N0024) 도출. 채팅의 휘발성을 Elendirna의 구조화된 기록으로 전환하는 '지식 결정화(Crystallization)' 개념 및 채널 간 지식 링크 활용 방안 제시.","ts":"2026-04-13T05:26:38.940915900+00:00"}
+{"action":"entry.new","agent":"human","id":"N0025","ts":"2026-04-13T05:27:53.183338900+00:00"}
+{"action":"revision.add","agent":"human","id":"N0025","ts":"2026-04-13T05:28:01.335163200+00:00"}
+{"agent":"human","entries":["N0025"],"event":"sync.record","session_id":null,"summary":"지식의 계보와 네트워크를 입체적으로 보여주는 시각화 전략(N0025) 도출. 지식 네트워크, 계보 타임라인, 기여도 열지도의 3대 차원 제시 및 DOT/JSON/UI 등 기술적 구현 방안 제안.","ts":"2026-04-13T05:28:06.442388+00:00"}
+{"action":"entry.new","agent":"human","id":"N0026","ts":"2026-04-13T06:47:41.250918+00:00"}
+{"action":"revision.add","agent":"human","id":"N0026","ts":"2026-04-13T06:47:51.020483+00:00"}
+{"action":"revision.add","agent":"human","id":"N0026","ts":"2026-04-13T06:49:16.945914800+00:00"}
+{"agent":"human","entries":["N0026"],"event":"sync.record","session_id":null,"summary":"도구 사용 패턴 분석 세션: '불평의 정보 밀도'와 '시간차 페어 프로그래밍' 개념 정립 및 N0026 박제. 업무 보안을 위해 구체적 식별자를 Blur 처리(Anonymized)하여 기록함.","ts":"2026-04-13T06:49:16.983140200+00:00"}

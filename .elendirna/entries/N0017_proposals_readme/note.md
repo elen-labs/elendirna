@@ -14,5 +14,8 @@ tags: []
 
 | 번호 | 제목 | 상태 |
 |---|---|---|
-| [001](001-mcp-auto-init.md) | MCP 서버 구동 시 `--auto-init` 플래그 제공 | Proposed |
-| [002](002-mcp-server-config-auto-add.md) | Vault 자동 Init 이후 MCP 서버 설정 JSON 자동 제공 및 구성 | Proposed |
+| [001](N0015) | MCP 서버 구동 시 `--auto-init` 플래그 제공 | Proposed |
+| [002](N0016) | Vault 자동 Init 이후 MCP 서버 설정 JSON 자동 제공 및 구성 | Proposed |
+| [003](N0020) | 명시적 Vault 선택 (Explicit Vault Selection) | Proposed |
+| [004](N0021) | 첨부파일 지원 및 무결성 검사 (Attachment Support) | Proposed |
+| [005](N0023) | 다인 협업 식별자(Identity) 및 봇 지원 | Proposed |
