@@ -48,6 +48,9 @@ enum Commands {
 
     /// sync.jsonl 세션 핸드오프 로그 관리 (v0.2)
     Sync(cli::sync::SyncArgs),
+
+    /// v1 vault를 v2 compact layout으로 이관 (v0.3)
+    Migrate(cli::migrate::MigrateArgs),
 }
 
 fn main() {
@@ -63,6 +66,7 @@ fn main() {
         Commands::Graph(args)    => cli::graph::run(args),
         Commands::Serve(args)    => cli::serve::run(args),
         Commands::Sync(args)     => cli::sync::run(args),
+        Commands::Migrate(args)  => cli::migrate::run(args),
     };
 
     if let Err(e) = result {

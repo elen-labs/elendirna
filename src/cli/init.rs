@@ -52,10 +52,24 @@ pub struct InitArgs {
     /// vault 이름 (기본: 디렉터리명)
     #[arg(long)]
     pub name: Option<String>,
+
+    /// 글로벌 vault를 홈 디렉터리에 초기화 (--path 와 함께 사용 불가)
+    #[arg(long, conflicts_with = "path")]
+    pub global: bool,
 }
 
 pub fn run(args: InitArgs) -> Result<(), ElfError> {
-    let root = args.path.canonicalize().unwrap_or(args.path.clone());
+    let root = if args.global {
+        let home = std::env::var("USERPROFILE")
+            .or_else(|_| std::env::var("HOME"))
+            .map(PathBuf::from)
+            .map_err(|_| ElfError::InvalidInput {
+                message: "홈 디렉터리를 결정할 수 없습니다".to_string(),
+            })?;
+        home
+    } else {
+        args.path.canonicalize().unwrap_or(args.path.clone())
+    };
 
     // 중복 초기화 검사
     let config_path = root.join(".elendirna").join("config.toml");
@@ -94,24 +108,24 @@ pub fn run(args: InitArgs) -> Result<(), ElfError> {
 
 fn planned_files(root: &Path, _vault_name: &str) -> Vec<(PathBuf, &'static str)> {
     vec![
-        (root.join(".elendirna").join("config.toml"), "vault 설정"),
-        (root.join(".elendirna").join("sync.jsonl"),  "sync 이벤트 로그"),
-        (root.join("entries"),                        "entry 디렉터리"),
-        (root.join("revisions"),                      "revision 디렉터리"),
-        (root.join("assets"),                         "asset 디렉터리"),
-        (root.join("CLAUDE.md"),                      "에이전트 안내"),
-        (root.join("README.md"),                      "vault README"),
-        (root.join(".gitignore"),                     ".gitignore"),
+        (root.join(".elendirna").join("config.toml"),            "vault 설정"),
+        (root.join(".elendirna").join("sync.jsonl"),              "sync 이벤트 로그"),
+        (root.join(".elendirna").join("entries"),                 "entry 디렉터리"),
+        (root.join(".elendirna").join("revisions"),               "revision 디렉터리"),
+        (root.join(".elendirna").join("assets"),                  "asset 디렉터리"),
+        (root.join("CLAUDE.md"),                                  "에이전트 안내"),
+        (root.join("README.md"),                                  "vault README"),
+        (root.join(".gitignore"),                                 ".gitignore"),
     ]
 }
 
 fn create_vault(root: &Path, vault_name: &str) -> Result<(), ElfError> {
     use crate::vault::util::atomic_write;
 
-    // 디렉터리 생성 + .gitkeep으로 git 추적 보장 (fix-009)
+    // 디렉터리 생성 + .gitkeep으로 git 추적 보장 (v0.3: compact layout)
     std::fs::create_dir_all(root.join(".elendirna"))?;
     for dir_name in &["entries", "revisions", "assets"] {
-        let dir = root.join(dir_name);
+        let dir = root.join(".elendirna").join(dir_name);
         std::fs::create_dir_all(&dir)?;
         let gitkeep = dir.join(".gitkeep");
         if !gitkeep.exists() {
@@ -153,9 +167,9 @@ fn git_add_force(root: &Path) {
     let _ = std::process::Command::new("git")
         .current_dir(root)
         .args(["add", "--force",
-            "entries/.gitkeep",
-            "revisions/.gitkeep",
-            "assets/.gitkeep",
+            ".elendirna/entries/.gitkeep",
+            ".elendirna/revisions/.gitkeep",
+            ".elendirna/assets/.gitkeep",
         ])
         .output(); // 에러는 무시
 }

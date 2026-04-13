@@ -70,8 +70,7 @@ pub fn run_new(args: NewArgs) -> Result<(), ElfError> {
     }
 
     // dry-run
-    let entries_dir = vault_root.join("entries");
-    let next_id = crate::vault::id::EntryId::next(&entries_dir)?;
+    let next_id = crate::vault::id::EntryId::next(&Entry::entries_dir(&vault_root))?;
     let slug = crate::vault::id::title_to_slug(&args.title);
     let dir_name = format!("{next_id}_{slug}");
 
