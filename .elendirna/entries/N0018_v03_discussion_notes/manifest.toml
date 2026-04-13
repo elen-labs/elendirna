@@ -2,7 +2,7 @@ schema_version = 1
 id = "N0018"
 title = "v0.3 Discussion Notes"
 created = "2026-04-09T16:19:03.734910300Z"
-updated = "2026-04-13T10:44:33.572437100Z"
+updated = "2026-04-13T11:02:04.436281500Z"
 tags = [
     "decision",
     "proposal",
