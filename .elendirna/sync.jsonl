@@ -92,3 +92,7 @@
 {"action":"revision.add","agent":"human","id":"N0029","ts":"2026-04-13T08:53:44.542724700+00:00"}
 {"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"v0.3.2: MCP 모드에서 vault 부재 시 글로벌 vault 자동 생성/관리 기능 구현 및 검증 완료","ts":"2026-04-13T09:28:10.516652+00:00"}
 {"action":"revision.add","agent":"human","id":"N0027","ts":"2026-04-13T10:21:45.293159300+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-13T10:44:33.573495300+00:00"}
+{"action":"revision.add","agent":"human","id":"N0019","ts":"2026-04-13T10:51:26.125975600+00:00"}
+{"action":"revision.add","agent":"human","id":"N0019","ts":"2026-04-13T10:59:53.524906800+00:00"}
+{"agent":"claude-opus-4-6","entries":["N0018","N0019"],"event":"sync.record","session_id":null,"summary":"N0018 r0013: Gemini MCP 우회 현상 실증 관찰 기록. N0019 r0004: AGENTS.md 도입 및 bundle --since 액션 아이템. N0019 r0005: Recap Entry(지난 이야기 패턴) 구상 기록.","ts":"2026-04-13T11:00:01.972103500+00:00"}
