@@ -51,6 +51,7 @@ mod validate {
             path: dir.path().to_path_buf(),
             dry_run: false,
             name: Some("t".to_string()),
+            global: false,
         })
         .unwrap();
         (dir, guard)
@@ -85,7 +86,7 @@ mod validate {
     fn dangling_link_detected() {
         let (dir, _guard) = setup();
         new_entry(&dir, "Alpha");
-        let entry_dir = dir.path().join("entries/N0001_alpha");
+        let entry_dir = dir.path().join(".elendirna/entries/N0001_alpha");
         let mut m = Manifest::read(&entry_dir).unwrap();
         m.links.push("N0099".to_string());
         m.write(&entry_dir).unwrap();
@@ -101,8 +102,8 @@ mod validate {
         new_entry(&dir, "A");
         new_entry(&dir, "B");
 
-        let e1_dir = dir.path().join("entries/N0001_a");
-        let e2_dir = dir.path().join("entries/N0002_b");
+        let e1_dir = dir.path().join(".elendirna/entries/N0001_a");
+        let e2_dir = dir.path().join(".elendirna/entries/N0002_b");
         let mut m1 = Manifest::read(&e1_dir).unwrap();
         let mut m2 = Manifest::read(&e2_dir).unwrap();
         m1.baseline = Some("N0002".to_string());
@@ -119,7 +120,7 @@ mod validate {
     fn orphan_revision_detected() {
         let (dir, _guard) = setup();
         new_entry(&dir, "Orphan");
-        std::fs::create_dir_all(dir.path().join("revisions/N0099")).unwrap();
+        std::fs::create_dir_all(dir.path().join(".elendirna/revisions/N0099")).unwrap();
 
         let result = run_all(dir.path()).unwrap();
         let orphans = result.issues.iter().filter(|i| i.kind == IssueKind::Orphan).count();

@@ -20,6 +20,7 @@ fn setup_vault() -> (TempDir, std::sync::MutexGuard<'static, ()>) {
         path: dir.path().to_path_buf(),
         dry_run: false,
         name: Some("test-vault".to_string()),
+        global: false,
     }).unwrap();
     (dir, guard)
 }

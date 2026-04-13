@@ -44,3 +44,7 @@
 {"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"N0019 (PLAN v0.3) 작성 완료. 4개 Phase, 7개 항목, 4개 성공 기준. N0018(논의), N0013(v0.2 계획)과 링크 연결.","ts":"2026-04-09T17:15:38.376763500+00:00"}
 {"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"demo_vault를 tests/fixtures/demo_vault로 이동. 루트 vault가 실전 데모 역할을 대체하므로 demo_vault는 테스트 전용으로 격하.","ts":"2026-04-09T17:23:10.840708500+00:00"}
 {"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"thiserror 1 → 2 업그레이드 완료. 63개 테스트 전통과. fix-002 재결정.","ts":"2026-04-09T22:14:50.768710500+00:00"}
+{"action":"revision.add","agent":"human","id":"N0001","ts":"2026-04-10T06:45:23.468286900+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-10T06:45:47.366693700+00:00"}
+{"agent":"human","entries":["N0001","N0018","N0019"],"event":"sync.record","session_id":null,"summary":"세션 아이디어 3건 Vault 등록 완료: N0001(r0001, 탄생 배경/산만함 anchor), N0018(r0009, IDEA-A vault 파라미터 / IDEA-B elf sessions / IDEA-C ~/.elendirna 글로벌 Vault). MCP 연결 점검 완료(cwd 방식). v0.2→main 병합, docs 브랜치 분리, demo_vault 정리도 이 세션에서 수행.","ts":"2026-04-10T06:45:56.853105300+00:00"}
+{"agent":"claude-sonnet-4-6","entries":["N0018","N0019","N0004"],"event":"sync.record","session_id":null,"summary":"v0.3 구현 완료: compact layout(schema v2), elf migrate, global vault fallback, 버전 0.3.0 격상. 기존 v0.3 계획(N0019)은 v0.4로 이동. N0019 r0001에 인수인계 작성.","ts":"2026-04-13T00:39:25.096015400+00:00"}

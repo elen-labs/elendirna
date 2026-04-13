@@ -11,7 +11,7 @@ pub struct Entry {
 
 impl Entry {
     pub fn entries_dir(vault_root: &Path) -> PathBuf {
-        vault_root.join("entries")
+        crate::vault::data_root(vault_root).join("entries")
     }
 
     /// entries/ 하위 모든 entry 로드

@@ -13,7 +13,7 @@ pub struct Revision {
 
 impl Revision {
     pub fn rev_dir(vault_root: &Path, entry_id: &EntryId) -> PathBuf {
-        vault_root.join("revisions").join(entry_id.to_string())
+        crate::vault::data_root(vault_root).join("revisions").join(entry_id.to_string())
     }
 
     /// revisions/<entry_id>/ 하위 모든 revision 로드 (번호 오름차순)

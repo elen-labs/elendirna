@@ -23,6 +23,7 @@ fn setup_vault() -> (TempDir, std::sync::MutexGuard<'static, ()>) {
         path: dir.path().to_path_buf(),
         dry_run: false,
         name: Some("test-vault".to_string()),
+        global: false,
     }).unwrap();
     (dir, guard)
 }
@@ -101,7 +102,7 @@ fn scenario_3day_workflow() {
     add_revision(&dir, "N0001", "가정 수정: 벡터 검색만으로는 컨텍스트 손실이 발생한다.");
 
     // revision 파일 확인
-    let rev_dir = dir.path().join("revisions/N0001");
+    let rev_dir = dir.path().join(".elendirna/revisions/N0001");
     assert!(rev_dir.join("r0001.md").exists());
     let content = std::fs::read_to_string(rev_dir.join("r0001.md")).unwrap();
     assert!(content.contains("baseline: N0001@r0000")); // Q1: 4자리
