@@ -72,6 +72,25 @@ vault/
 
 MCP 서버 vault 경로 우선순위: `--vault` 플래그 → `ELF_VAULT` 환경변수 → CWD walk-up
 
+## Dogfooding
+
+Elendirna는 **자기 자신을 Elendirna로 관리**합니다.
+
+이 프로젝트의 설계 결정, 제안(Proposal), 시나리오, 철학적 논의는 모두 `.elendirna/` vault에 Base-Delta 구조로 기록되어 있습니다. `elf bundle`로 꺼내보면 "왜 이 기능이 이렇게 만들어졌는지"의 계보를 따라갈 수 있습니다.
+
+## Try it with AI
+
+MCP 서버를 세팅한 뒤, AI에게 이렇게 말해보세요:
+
+> "이 vault의 유지보수 이력을 알려줘"
+
+```bash
+# Claude Desktop / 다른 MCP 클라이언트 설정
+elf serve --mcp --vault /path/to/elendirna
+```
+
+AI는 `sync_record` 로그와 revision chain을 통해 프로젝트가 어떤 결정을 거쳐 지금 모습이 됐는지 컨텍스트를 복원합니다.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

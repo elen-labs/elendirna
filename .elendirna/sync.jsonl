@@ -91,3 +91,4 @@
 {"action":"entry.new","agent":"human","id":"N0029","ts":"2026-04-13T08:53:25.838734900+00:00"}
 {"action":"revision.add","agent":"human","id":"N0029","ts":"2026-04-13T08:53:44.542724700+00:00"}
 {"agent":"human","entries":[],"event":"sync.record","session_id":null,"summary":"v0.3.2: MCP 모드에서 vault 부재 시 글로벌 vault 자동 생성/관리 기능 구현 및 검증 완료","ts":"2026-04-13T09:28:10.516652+00:00"}
+{"action":"revision.add","agent":"human","id":"N0027","ts":"2026-04-13T10:21:45.293159300+00:00"}

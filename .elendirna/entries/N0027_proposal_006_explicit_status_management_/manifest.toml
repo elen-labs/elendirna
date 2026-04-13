@@ -2,7 +2,7 @@ schema_version = 1
 id = "N0027"
 title = "Proposal 006: Explicit Status Management and Workflow Control"
 created = "2026-04-13T08:31:41.421790Z"
-updated = "2026-04-13T08:33:16.465530800Z"
+updated = "2026-04-13T10:21:45.292291400Z"
 tags = [
     "proposal",
     "decision",
