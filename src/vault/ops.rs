@@ -36,8 +36,7 @@ pub fn entry_new(
         return Err(ElfError::AlreadyExists { id: existing.manifest.id });
     }
 
-    let entries_dir = vault_root.join("entries");
-    let next_id = EntryId::next(&entries_dir)?;
+    let next_id = EntryId::next(&Entry::entries_dir(vault_root))?;
     let entry = Entry::create(
         vault_root,
         next_id,

@@ -8,6 +8,7 @@ pub mod graph;
 pub mod query;
 pub mod serve;
 pub mod sync;
+pub mod migrate;
 
 #[cfg(test)]
 mod tests;

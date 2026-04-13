@@ -98,8 +98,8 @@ pub fn run_all(vault_root: &Path) -> Result<ValidateResult, ElfError> {
 // ─────────────────────────────────────────
 
 fn check_naming(vault_root: &Path, entries: &[Entry], issues: &mut Vec<Issue>) {
-    let entries_dir = vault_root.join("entries");
-    let _revisions_dir = vault_root.join("revisions");
+    let entries_dir = crate::vault::data_root(vault_root).join("entries");
+    let _revisions_dir = crate::vault::data_root(vault_root).join("revisions");
 
     // entry 디렉터리명: N\d{4}_<slug>  (slug는 유니코드 문자/숫자/밑줄 허용)
     let entry_dir_re = Regex::new(r"^N\d{4}_[\p{L}\p{N}_]+$").unwrap();
@@ -297,7 +297,7 @@ fn check_dangling(
 
         // sources
         for src in &m.sources {
-            let src_path = vault_root.join("assets").join(src);
+            let src_path = crate::vault::data_root(vault_root).join("assets").join(src);
             if !src_path.exists() {
                 issues.push(Issue {
                     severity: Severity::Warning,
@@ -413,7 +413,7 @@ fn check_orphan(
     entry_ids: &HashSet<String>,
     issues: &mut Vec<Issue>,
 ) -> Result<(), ElfError> {
-    let rev_root = vault_root.join("revisions");
+    let rev_root = crate::vault::data_root(vault_root).join("revisions");
     if !rev_root.exists() { return Ok(()); }
 
     for e in std::fs::read_dir(&rev_root)?.flatten() {
@@ -438,7 +438,7 @@ fn check_orphan(
 // ─────────────────────────────────────────
 
 fn check_asset(vault_root: &Path, entries: &[Entry], issues: &mut Vec<Issue>) {
-    let assets_dir = vault_root.join("assets");
+    let assets_dir = crate::vault::data_root(vault_root).join("assets");
     if !assets_dir.exists() { return; }
 
     // manifest에 등록된 sources 수집
