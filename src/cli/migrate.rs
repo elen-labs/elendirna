@@ -69,6 +69,45 @@ pub fn run(args: MigrateArgs) -> Result<(), ElfError> {
     Ok(())
 }
 
+/// MCP 서버 시작 시 v1 vault를 자동으로 v2로 이관.
+/// stdout 대신 stderr로만 출력 (stdio MCP 프로토콜 보호).
+/// 이미 v2이거나 실패해도 서버 구동을 막지 않는다.
+pub fn auto_migrate_silent(vault_root: &std::path::Path) {
+    if vault_root.join(".elendirna").join("entries").exists() {
+        // 이미 v2 — schema_version만 조용히 맞춘다
+        if let Ok(mut config) = VaultConfig::read(vault_root) {
+            if config.schema_version < crate::vault::config::CURRENT_SCHEMA_VERSION {
+                config.schema_version = crate::vault::config::CURRENT_SCHEMA_VERSION;
+                let _ = config.write(vault_root);
+                eprintln!("[elf] schema_version → {} 업데이트", crate::vault::config::CURRENT_SCHEMA_VERSION);
+            }
+        }
+        return;
+    }
+
+    eprintln!("[elf] v1 vault 감지 — v2 compact layout으로 자동 이관 중...");
+    let dirs = ["entries", "revisions", "assets"];
+    for name in &dirs {
+        let src = vault_root.join(name);
+        let dst = vault_root.join(".elendirna").join(name);
+        if src.exists() {
+            match std::fs::rename(&src, &dst) {
+                Ok(_) => eprintln!("[elf]   {name}/  →  .elendirna/{name}/"),
+                Err(e) => {
+                    eprintln!("[elf]   {name}/ 이관 실패: {e}");
+                    return;
+                }
+            }
+        }
+    }
+
+    if let Ok(mut config) = VaultConfig::read(vault_root) {
+        config.schema_version = crate::vault::config::CURRENT_SCHEMA_VERSION;
+        let _ = config.write(vault_root);
+    }
+    eprintln!("[elf] 자동 이관 완료 (schema_version={})", crate::vault::config::CURRENT_SCHEMA_VERSION);
+}
+
 /// vault root 탐색 (find_vault_root와 동일하지만 global fallback 없음)
 fn find_v1_vault_root(start: &std::path::Path) -> Result<PathBuf, ElfError> {
     let mut current = start.canonicalize().unwrap_or(start.to_path_buf());

@@ -48,3 +48,4 @@
 {"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-10T06:45:47.366693700+00:00"}
 {"agent":"human","entries":["N0001","N0018","N0019"],"event":"sync.record","session_id":null,"summary":"세션 아이디어 3건 Vault 등록 완료: N0001(r0001, 탄생 배경/산만함 anchor), N0018(r0009, IDEA-A vault 파라미터 / IDEA-B elf sessions / IDEA-C ~/.elendirna 글로벌 Vault). MCP 연결 점검 완료(cwd 방식). v0.2→main 병합, docs 브랜치 분리, demo_vault 정리도 이 세션에서 수행.","ts":"2026-04-10T06:45:56.853105300+00:00"}
 {"agent":"claude-sonnet-4-6","entries":["N0018","N0019","N0004"],"event":"sync.record","session_id":null,"summary":"v0.3 구현 완료: compact layout(schema v2), elf migrate, global vault fallback, 버전 0.3.0 격상. 기존 v0.3 계획(N0019)은 v0.4로 이동. N0019 r0001에 인수인계 작성.","ts":"2026-04-13T00:39:25.096015400+00:00"}
+{"action":"revision.add","agent":"human","id":"N0004","ts":"2026-04-13T00:50:31.933030300+00:00"}
