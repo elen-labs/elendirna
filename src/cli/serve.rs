@@ -22,9 +22,9 @@ pub fn run(args: ServeArgs) -> Result<(), ElfError> {
     }
 
     let vault_root = match args.vault {
-        Some(path) => path,
+        Some(path) => vault::normalize_vault_root(path),
         None => match std::env::var("ELF_VAULT") {
-            Ok(env_path) => std::path::PathBuf::from(env_path),
+            Ok(env_path) => vault::normalize_vault_root(std::path::PathBuf::from(env_path)),
             Err(_) => {
                 let cwd = std::env::current_dir()?;
                 match vault::find_vault_root(&cwd) {
