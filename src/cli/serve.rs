@@ -9,13 +9,9 @@ pub struct ServeArgs {
     #[arg(long)]
     pub mcp: bool,
 
-    /// vault 경로 (기본: 현재 디렉터리에서 탐색)
+    /// vault 경로 (기본: 현재 디렉터리에서 탐색 → 없으면 글로벌 vault 자동 생성)
     #[arg(long)]
     pub vault: Option<std::path::PathBuf>,
-
-    /// vault가 없을 경우 현재 디렉터리에 자동으로 생성
-    #[arg(long)]
-    pub auto_init: bool,
 }
 
 pub fn run(args: ServeArgs) -> Result<(), ElfError> {
@@ -33,14 +29,22 @@ pub fn run(args: ServeArgs) -> Result<(), ElfError> {
                 let cwd = std::env::current_dir()?;
                 match vault::find_vault_root(&cwd) {
                     Ok(root) => root,
-                    Err(ElfError::NotAVault) if args.auto_init => {
+                    Err(ElfError::NotAVault) => {
+                        // vault를 찾지 못하면 글로벌 vault(~/.elendirna/)를 자동 생성
+                        let home = std::env::var("USERPROFILE")
+                            .or_else(|_| std::env::var("HOME"))
+                            .map(std::path::PathBuf::from)
+                            .map_err(|_| ElfError::InvalidInput {
+                                message: "홈 디렉터리를 결정할 수 없습니다".to_string(),
+                            })?;
+                        eprintln!("[elf] vault 없음 — 글로벌 vault 자동 생성: {}", home.display());
                         crate::cli::init::run(crate::cli::init::InitArgs {
-                            path: cwd.clone(),
+                            path: home.clone(),
                             dry_run: false,
-                            name: None,
-                            global: false,
+                            name: Some("global".to_string()),
+                            global: true,
                         })?;
-                        cwd
+                        home
                     }
                     Err(e) => return Err(e),
                 }
