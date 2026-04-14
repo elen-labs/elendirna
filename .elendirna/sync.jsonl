@@ -98,3 +98,9 @@
 {"agent":"claude-opus-4-6","entries":["N0018","N0019"],"event":"sync.record","session_id":null,"summary":"N0018 r0013: Gemini MCP 우회 현상 실증 관찰 기록. N0019 r0004: AGENTS.md 도입 및 bundle --since 액션 아이템. N0019 r0005: Recap Entry(지난 이야기 패턴) 구상 기록.","ts":"2026-04-13T11:00:01.972103500+00:00"}
 {"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-13T11:02:04.436975900+00:00"}
 {"agent":"claude-opus-4-6","entries":["N0018"],"event":"sync.record","session_id":null,"summary":"N0018 r0014: dogfooding vault가 코드베이스 내에 위치함으로써 MCP 우회를 유발하는 아이러니 기록. 일반 사용자(글로벌 vault)에겐 발생하지 않는 dogfooding 특유의 문제.","ts":"2026-04-13T11:02:34.560452100+00:00"}
+{"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-14T02:31:26.679468300+00:00"}
+{"agent":"claude-sonnet-4-6","entries":[],"event":"sync.record","session_id":null,"summary":"N0018 r0015: multi-vault 설계 결정 기록. @vault: 네임스페이스(global=절대/local=파라미터 전용/alias=config), cwd=인텐트 신호 검증(현행 탐색 우선순위가 이미 정확), --vault 파라미터는 예외 탈출구 위상. 구현은 v0.4 범위.","ts":"2026-04-14T02:31:35.114410400+00:00"}
+{"agent":"claude-sonnet-4-6","entries":["N0004","N0019","N0029","N0030","N0031"],"event":"sync.record","session_id":null,"summary":"v0.4 스코프 확정(MCP description·snippet·bundle --since·bundle --depth·help --json·multi-vault). elf entry status는 N0031(SQLite Activity Index)과 연계. N0030 SSE Transport 별도 entry 신설(선결: multi-vault, author 필드 강제 가능성). N0031 SQLite Activity Index 신설(N0028 §2.C 연결, elf sessions·bundle --since·status 이력 통합). N0029 r0002: FAQ 그냥 Git 쓰면 안 되나요? 추가.","ts":"2026-04-14T02:31:00.000000+00:00"}
+{"action":"entry.new","agent":"human","id":"N0032","ts":"2026-04-14T06:14:57.406941900+00:00"}
+{"action":"revision.add","agent":"human","id":"N0032","ts":"2026-04-14T06:15:43.283094600+00:00"}
+{"action":"revision.add","agent":"human","id":"N0004","ts":"2026-04-14T06:53:17.923757200+00:00"}
