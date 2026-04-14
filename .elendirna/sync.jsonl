@@ -98,3 +98,6 @@
 {"agent":"claude-opus-4-6","entries":["N0018","N0019"],"event":"sync.record","session_id":null,"summary":"N0018 r0013: Gemini MCP 우회 현상 실증 관찰 기록. N0019 r0004: AGENTS.md 도입 및 bundle --since 액션 아이템. N0019 r0005: Recap Entry(지난 이야기 패턴) 구상 기록.","ts":"2026-04-13T11:00:01.972103500+00:00"}
 {"action":"revision.add","agent":"human","id":"N0018","ts":"2026-04-13T11:02:04.436975900+00:00"}
 {"agent":"claude-opus-4-6","entries":["N0018"],"event":"sync.record","session_id":null,"summary":"N0018 r0014: dogfooding vault가 코드베이스 내에 위치함으로써 MCP 우회를 유발하는 아이러니 기록. 일반 사용자(글로벌 vault)에겐 발생하지 않는 dogfooding 특유의 문제.","ts":"2026-04-13T11:02:34.560452100+00:00"}
+{"action":"entry.new","agent":"human","id":"N0030","ts":"2026-04-14T06:48:06.163908800+00:00"}
+{"action":"revision.add","agent":"human","id":"N0030","ts":"2026-04-14T06:50:06.670244200+00:00"}
+{"agent":"human","entries":["N0030"],"event":"sync.record","session_id":null,"summary":"v0.4 구현 계획 확정. 7개 항목 (Multi-Vault + auto-alias, entry status, MCP description 강화, serve snippet, bundle --since/--depth, help --json). vault_name을 implicit alias로 활용하는 방안 설계. PLAN v0.4 entry 신설 (N0030).","ts":"2026-04-14T06:50:14.320157100+00:00"}
