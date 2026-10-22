@@ -50,6 +50,10 @@ This installs the `elf` executable. The Rust workspace contains `eln-cli` (CLI),
 
 ## Quick start / 빠른 시작
 
+These commands use the `elf` executable installed by Cargo. With npm, replace `elf` with `elendirna`, or prefix each command with `npx -y elendirna`.
+
+아래 명령은 Cargo로 설치한 `elf` 실행 파일 기준입니다. npm으로 설치했다면 `elf`를 `elendirna`로 바꾸거나, 각 명령 앞에 `npx -y elendirna`를 붙이세요.
+
 ```bash
 elf init my-vault
 cd my-vault
