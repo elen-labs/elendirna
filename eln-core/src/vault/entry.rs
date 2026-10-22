@@ -134,6 +134,24 @@ impl Entry {
         self.dir.join("note.md")
     }
 
+    /// manifest 저장(updated 갱신) + note.md frontmatter 미러 필드(title/baseline/tags) 동기화.
+    /// frontmatter는 manifest의 미러라 manifest만 쓰면 validate consistency 경고가 남는다.
+    /// note.md가 없거나 frontmatter 파싱이 안 되면 manifest만 저장 (validate가 따로 보고).
+    pub fn save_with_frontmatter(&mut self) -> Result<(), ElfError> {
+        self.manifest.touch_and_write(&self.dir)?;
+        let note_path = self.note_path();
+        if let Ok((mut fm, body)) = NoteFrontmatter::read(&note_path) {
+            let m = &self.manifest;
+            if fm.title != m.title || fm.baseline != m.baseline || fm.tags != m.tags {
+                fm.title = m.title.clone();
+                fm.baseline = m.baseline.clone();
+                fm.tags = m.tags.clone();
+                NoteFrontmatter::write(&note_path, &fm, &body)?;
+            }
+        }
+        Ok(())
+    }
+
     /// note.md 본문만 반환 (frontmatter 제외) — fix-014
     pub fn note_body(&self) -> Result<String, ElfError> {
         let (_, body) = NoteFrontmatter::read(&self.note_path())?;

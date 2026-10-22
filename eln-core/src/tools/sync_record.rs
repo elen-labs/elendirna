@@ -11,6 +11,7 @@ use eln_plugin_sdk::{CallContext, PermissionDenied, Permissions, ToolError, Tool
 use serde_json::{Value, json};
 
 use super::{map_ops_error, optional_string, optional_string_array, require_string};
+use crate::output::message::{Message, MessageScope, push_message};
 use crate::vault::ops;
 
 pub const NAME: &str = "sync_record";
@@ -50,9 +51,25 @@ impl ToolHandler for SyncRecordHandler {
                 (!sid.is_empty()).then(|| sid.to_string())
             });
 
+        let unknown = ops::unknown_entry_ids(vault_root, &entries);
         ops::sync_record(vault_root, summary, agent, entries, session_id).map_err(map_ops_error)?;
 
-        Ok(json!({ "ok": true }))
+        let mut result = json!({ "ok": true });
+        if !unknown.is_empty() {
+            // 기록은 유지(fail-soft) — 다른 주제 vault의 ID가 섞였을 가능성만 알린다.
+            push_message(
+                &mut result,
+                Message::warning(
+                    "unknown_entries",
+                    format!(
+                        "entries 중 이 vault에 없는 ID가 있습니다: {}. 기록은 저장되었습니다 — 다른 vault의 entry라면 해당 vault에 기록하세요.",
+                        unknown.join(", ")
+                    ),
+                    MessageScope::Call,
+                ),
+            );
+        }
+        Ok(result)
     }
 }
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### 주제 vault 격리 보강
+
+- **tag 변경 시 note.md frontmatter 동기화 (버그 수정)**: `entry_tag_set`/`entry_tag_add`/`entry_tag_remove`(MCP·CLI)와 뷰어 `ops::entry_set_tags`가 manifest만 갱신해 frontmatter tags가 어긋나던 문제(validate consistency 경고 누적, global N0038 사례). `Entry::save_with_frontmatter()`로 manifest 저장과 frontmatter 미러 필드(title/baseline/tags) 동기화를 한 경로로 묶음. 기존 불일치는 `elf validate --fix`로 정리
+- **`sync_record` entries 범위 경고**: `entries`에 현재 vault에 없는 ID가 있으면 기록은 유지(fail-soft)하고 MCP 응답에 `messages[]` warning(`kind: unknown_entries`), CLI는 stderr `WARN`. `N####@r####`는 entry 부분만 판정. `ops::unknown_entry_ids` 신규
+- **`elf serve --no-fallback`**: vault 미발견 시 글로벌 vault 자동 생성·채택 대신 에러 종료(E2001). cwd walk-up이 홈 vault에 닿는 경우(`CwdSearchHome`)도 거부. `--vault`/`ELF_VAULT` 명시 경로는 무영향. 기본 동작 불변(opt-in)
+- 테스트 +5: frontmatter 동기화 1, sync_record 경고 1, `--no-fallback` 프로세스 회귀 3(vault 없음 / 홈 walk-up 거부 / 홈 아래 주제 vault 허용)
+
+---
+
 ## [0.9.0] — 2026-06-02
 
 ### `bundle` 응답에 `sync_history` 추가 (N0117/N0069)

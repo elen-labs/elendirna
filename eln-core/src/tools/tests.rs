@@ -780,6 +780,66 @@ async fn entry_tag_set_missing_tags_returns_invalid_argument() {
     }
 }
 
+fn frontmatter_tags(dir: &TempDir, id: &str) -> Vec<String> {
+    let id = crate::vault::id::EntryId::from_str(id).unwrap();
+    let entry = crate::vault::entry::Entry::find_by_id(dir.path(), &id).unwrap();
+    crate::schema::manifest::NoteFrontmatter::read(&entry.note_path())
+        .unwrap()
+        .0
+        .tags
+}
+
+/// tag 변경이 note.md frontmatter까지 따라가는지 — manifest만 쓰던 회귀 방지 (global N0038 사례).
+#[tokio::test]
+async fn entry_tag_writes_sync_note_frontmatter() {
+    let dir = setup_vault();
+    ops::entry_new(dir.path(), "tag entry", None, None, vec!["old".into()]).unwrap();
+    let write = ctx(Permissions::WRITE);
+
+    EntryTagSetHandler
+        .call(
+            &write,
+            json!({ "vault_root": vault_root_arg(&dir), "id": "N0001", "tags": ["alpha", "beta"] }),
+        )
+        .await
+        .unwrap();
+    assert_eq!(frontmatter_tags(&dir, "N0001"), vec!["alpha", "beta"]);
+
+    EntryTagAddHandler
+        .call(
+            &write,
+            json!({ "vault_root": vault_root_arg(&dir), "id": "N0001", "tag": "gamma" }),
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        frontmatter_tags(&dir, "N0001"),
+        vec!["alpha", "beta", "gamma"]
+    );
+
+    EntryTagRemoveHandler
+        .call(
+            &write,
+            json!({ "vault_root": vault_root_arg(&dir), "id": "N0001", "tag": "alpha" }),
+        )
+        .await
+        .unwrap();
+    assert_eq!(frontmatter_tags(&dir, "N0001"), vec!["beta", "gamma"]);
+
+    // 뷰어 경로 (ops) — 정렬 시멘틱 유지
+    ops::entry_set_tags(dir.path(), "N0001", vec!["zeta".into(), "eta".into()]).unwrap();
+    assert_eq!(frontmatter_tags(&dir, "N0001"), vec!["eta", "zeta"]);
+
+    let result = crate::schema::validate::run_all(dir.path()).unwrap();
+    assert!(
+        !result
+            .issues
+            .iter()
+            .any(|i| i.message.contains("tags 불일치")),
+        "tag 변경 후 consistency 경고가 남으면 안 됨"
+    );
+}
+
 // ─── revision_add ────────────────────────
 
 #[tokio::test]
@@ -844,6 +904,45 @@ async fn sync_record_writes_event() {
     let sync_path = dir.path().join(".elendirna").join("sync.jsonl");
     let content = std::fs::read_to_string(&sync_path).expect("sync.jsonl exists");
     assert!(content.contains("PoC-2 sync test"));
+}
+
+#[tokio::test]
+async fn sync_record_warns_on_entries_outside_vault() {
+    // 주제 vault 격리: 다른 vault의 ID가 섞여도 기록은 남기되(fail-soft) 경고로 surface.
+    let dir = setup_vault();
+    ops::entry_new(dir.path(), "known", None, None, vec![]).unwrap();
+    let result = SyncRecordHandler
+        .call(
+            &ctx(Permissions::WRITE),
+            json!({
+                "vault_root": vault_root_arg(&dir),
+                "summary":    "cross-vault leak check",
+                "entries":    ["N0001", "N0001@r0001", "N0042", "not-an-id"],
+            }),
+        )
+        .await
+        .expect("sync_record stays fail-soft");
+    assert_eq!(result["ok"], Value::Bool(true));
+    assert_eq!(
+        last_sync_record(&dir)["entries"],
+        json!(["N0001", "N0001@r0001", "N0042", "not-an-id"])
+    );
+    let messages = result["messages"].as_array().expect("warning attached");
+    assert_eq!(messages.len(), 1);
+    assert_eq!(messages[0]["kind"], "unknown_entries");
+    let text = messages[0]["message"].as_str().unwrap();
+    assert!(text.contains("N0042") && text.contains("not-an-id"));
+    assert!(!text.contains("N0001"));
+
+    // 전부 이 vault의 ID면 messages 없음
+    let clean = SyncRecordHandler
+        .call(
+            &ctx(Permissions::WRITE),
+            json!({ "vault_root": vault_root_arg(&dir), "summary": "ok", "entries": ["N0001"] }),
+        )
+        .await
+        .unwrap();
+    assert!(clean.get("messages").is_none());
 }
 
 #[tokio::test]

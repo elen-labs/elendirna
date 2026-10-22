@@ -36,6 +36,12 @@ pub struct ServeArgs {
     #[arg(long)]
     pub vault: Option<std::path::PathBuf>,
 
+    /// vault를 못 찾았을 때 글로벌 vault로 넘어가지 않고 에러로 종료 (주제 vault 격리용 opt-in).
+    /// cwd 상위 탐색이 홈 vault에 닿는 경우(`CwdSearchHome`)도 폴백으로 보고 거부한다.
+    /// `--vault` / `ELF_VAULT`로 명시한 경로에는 영향 없음.
+    #[arg(long)]
+    pub no_fallback: bool,
+
     /// MCP client 설정 snippet만 출력하고 종료 (`--mcp` 없이). transport에 따라 stdio/http snippet.
     /// `--mcp` 없는 `elf serve`는 기본적으로 휴먼 뷰어를 구동하므로, config 안내가 필요할 때 사용.
     #[arg(long)]
@@ -111,7 +117,23 @@ pub fn run(args: ServeArgs) -> Result<(), ElfError> {
                         } else {
                             VaultOrigin::CwdSearch
                         };
+                        if args.no_fallback && origin == VaultOrigin::CwdSearchHome {
+                            eprintln!(
+                                "[elf] --no-fallback: cwd 상위 탐색이 홈(글로벌) vault에 닿았습니다: {}. \
+                                주제 디렉터리에 `elf init`하거나 --vault / ELF_VAULT로 지정하세요.",
+                                root.display()
+                            );
+                            return Err(ElfError::NotAVault);
+                        }
                         (VaultResolution { path: root, origin }, false)
+                    }
+                    Err(ElfError::NotAVault) if args.no_fallback => {
+                        eprintln!(
+                            "[elf] --no-fallback: vault를 찾지 못했습니다 (cwd: {}). \
+                            글로벌 vault로 넘어가지 않습니다 — --vault / ELF_VAULT로 지정하세요.",
+                            cwd.display()
+                        );
+                        return Err(ElfError::NotAVault);
                     }
                     Err(ElfError::NotAVault) => {
                         let home = std::env::var("USERPROFILE")

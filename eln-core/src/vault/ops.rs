@@ -381,7 +381,7 @@ pub fn entry_set_tags(
     new_tags.sort();
     new_tags.dedup();
     entry.manifest.tags = new_tags;
-    entry.manifest.touch_and_write(&entry.dir)?;
+    entry.save_with_frontmatter()?;
     append_sync_event(vault_root, &format!("entry.tag.set.{id}"), Some(id_str))?;
     Ok(entry)
 }
@@ -821,6 +821,23 @@ pub fn sync_record(
         .open(&path)?;
     file.write_all(line.as_bytes())?;
     Ok(())
+}
+
+/// sync_record `entries` 중 이 vault에 없는 ID를 골라낸다 (입력 순서 유지).
+/// `N0001@r0002`처럼 revision이 붙은 참조는 entry 부분만 본다. ID 형식이 아니거나
+/// 다른 vault 참조(`@vault:...`)여도 이 vault 기준으로는 해석 불가라 함께 보고한다.
+/// sync_record는 fail-soft handoff hint라 거부 대신 caller가 경고로만 surface한다.
+pub fn unknown_entry_ids(vault_root: &Path, entries: &[String]) -> Vec<String> {
+    entries
+        .iter()
+        .filter(|raw| {
+            let id_part = raw.split('@').next().unwrap_or("");
+            EntryId::from_str(id_part)
+                .and_then(|id| Entry::find_by_id(vault_root, &id))
+                .is_none()
+        })
+        .cloned()
+        .collect()
 }
 
 /// sync.jsonl에서 최근 N건 읽기. agent_filter 지정 시 해당 agent 이벤트만 반환.

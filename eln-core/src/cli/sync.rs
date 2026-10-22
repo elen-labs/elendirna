@@ -63,6 +63,13 @@ pub fn run(args: SyncArgs, vault_args: VaultArgs) -> Result<(), ElfError> {
 
 pub fn run_record(args: RecordArgs, vault_args: VaultArgs) -> Result<(), ElfError> {
     let vault_root = vault::resolve_vault_root(&vault_args)?;
+    let unknown = ops::unknown_entry_ids(&vault_root, &args.entries);
+    if !unknown.is_empty() {
+        eprintln!(
+            "WARN: entries 중 이 vault에 없는 ID가 있습니다: {} (기록은 저장됨)",
+            unknown.join(", ")
+        );
+    }
     ops::sync_record(
         &vault_root,
         &args.summary,

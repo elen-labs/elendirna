@@ -62,8 +62,7 @@ impl ToolHandler for EntryTagSetHandler {
         if changed {
             entry.manifest.tags = new_tags.clone();
             entry
-                .manifest
-                .touch_and_write(&entry.dir)
+                .save_with_frontmatter()
                 .map_err(|e| ToolError::Internal(e.to_string()))?;
             let event = format!("entry.tag.set.{id}");
             let _ = append_sync_event(vault_root, &event, Some(&id.to_string()));

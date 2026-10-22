@@ -813,7 +813,7 @@ pub fn run_tag_add(args: TagAddArgs, vault_args: VaultArgs) -> Result<(), ElfErr
     let already = entry.manifest.tags.iter().any(|t| t == &tag);
     if !already {
         entry.manifest.tags.push(tag.clone());
-        entry.manifest.touch_and_write(&entry.dir)?;
+        entry.save_with_frontmatter()?;
         let event = format!("entry.tag.added.{id}.{tag}");
         append_sync_event(&vault_root, &event, Some(&id.to_string()))?;
     }
@@ -855,7 +855,7 @@ pub fn run_tag_remove(args: TagRemoveArgs, vault_args: VaultArgs) -> Result<(), 
     entry.manifest.tags.retain(|t| t != &tag);
     let removed = entry.manifest.tags.len() < before_len;
     if removed {
-        entry.manifest.touch_and_write(&entry.dir)?;
+        entry.save_with_frontmatter()?;
         let event = format!("entry.tag.removed.{id}.{tag}");
         append_sync_event(&vault_root, &event, Some(&id.to_string()))?;
     }
@@ -907,7 +907,7 @@ pub fn run_tag_set(args: TagSetArgs, vault_args: VaultArgs) -> Result<(), ElfErr
     let changed = entry.manifest.tags != new_tags;
     if changed {
         entry.manifest.tags = new_tags.clone();
-        entry.manifest.touch_and_write(&entry.dir)?;
+        entry.save_with_frontmatter()?;
         let event = format!("entry.tag.set.{id}");
         append_sync_event(&vault_root, &event, Some(&id.to_string()))?;
     }

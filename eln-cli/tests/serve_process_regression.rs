@@ -91,3 +91,95 @@ fn serve_mcp_survives_when_home_already_initialized_and_cwd_is_non_vault() {
          Expected stdio server to stay alive after Fallback init adopts existing vault."
     );
 }
+
+/// `--no-fallback`: vault를 못 찾으면 글로벌로 넘어가지 않고 즉시 종료해야 한다 (주제 vault 격리).
+/// 홈 vault 미존재 → 자동 생성도 하지 않아야 하고, cwd 상위 탐색이 홈 vault에 닿는 경우도 거부.
+fn serve_no_fallback(fake_home: &std::path::Path, cwd: &std::path::Path) -> std::process::Output {
+    let mut cmd = Command::cargo_bin("elf").expect("cargo binary 'elf' 찾기 실패");
+    cmd.arg("serve")
+        .arg("--mcp")
+        .arg("--no-fallback")
+        .env_remove("ELF_VAULT")
+        .env("USERPROFILE", fake_home)
+        .env("HOME", fake_home)
+        .current_dir(cwd)
+        // 거부 경로는 stdin을 읽기 전에 끝나야 한다 — 서버가 떴다면 null stdin으로 곧 정상 종료.
+        .stdin(Stdio::null());
+    cmd.output()
+        .expect("elf serve --mcp --no-fallback 실행 실패")
+}
+
+/// tempdir 상위에 실제 vault가 있으면(예: 시스템 temp가 실제 홈 vault 아래) walk-up이 그걸 잡으므로
+/// "vault 없음" 시나리오 자체가 성립하지 않는다.
+fn has_ancestor_vault(path: &std::path::Path) -> bool {
+    path.ancestors()
+        .any(|p| p.join(".elendirna").join("config.toml").exists())
+}
+
+#[test]
+fn serve_no_fallback_rejects_when_no_vault_found() {
+    let fake_home = tempfile::tempdir().expect("fake home tempdir");
+    let fake_cwd = tempfile::tempdir().expect("fake cwd tempdir");
+    if has_ancestor_vault(fake_cwd.path()) {
+        eprintln!(
+            "skip: tempdir 상위에 실제 vault 존재 — {}",
+            fake_cwd.path().display()
+        );
+        return;
+    }
+
+    let out = serve_no_fallback(fake_home.path(), fake_cwd.path());
+    assert!(!out.status.success(), "--no-fallback인데 성공 종료함");
+    assert!(String::from_utf8_lossy(&out.stderr).contains("--no-fallback"));
+    assert!(
+        !fake_home.path().join(".elendirna").exists(),
+        "--no-fallback인데 글로벌 vault를 자동 생성함"
+    );
+}
+
+#[test]
+fn serve_no_fallback_rejects_cwd_walkup_hitting_home_vault() {
+    let fake_home = tempfile::tempdir().expect("fake home tempdir");
+    init_vault_at(fake_home.path());
+    let topic_dir = fake_home.path().join("topic-without-vault");
+    std::fs::create_dir_all(&topic_dir).unwrap();
+
+    let out = serve_no_fallback(fake_home.path(), &topic_dir);
+    assert!(
+        !out.status.success(),
+        "홈 vault walk-up을 --no-fallback이 막지 못함"
+    );
+    assert!(String::from_utf8_lossy(&out.stderr).contains("홈(글로벌) vault"));
+}
+
+#[test]
+fn serve_no_fallback_allows_topic_vault_under_home() {
+    let fake_home = tempfile::tempdir().expect("fake home tempdir");
+    init_vault_at(fake_home.path());
+    let topic_dir = fake_home.path().join("gaming");
+    std::fs::create_dir_all(&topic_dir).unwrap();
+    init_vault_at(&topic_dir);
+
+    // 주제 vault가 있으면 정상 기동 — stdin을 열어 둔 채 살아 있는지만 본다.
+    let mut cmd = Command::cargo_bin("elf").expect("cargo binary 'elf' 찾기 실패");
+    cmd.arg("serve")
+        .arg("--mcp")
+        .arg("--no-fallback")
+        .env_remove("ELF_VAULT")
+        .env("USERPROFILE", fake_home.path())
+        .env("HOME", fake_home.path())
+        .current_dir(&topic_dir)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    let mut child = cmd.spawn().expect("elf serve --mcp spawn 실패");
+    let _stdin_keep_alive = child.stdin.take();
+    std::thread::sleep(Duration::from_millis(1500));
+    let early_exit = child.try_wait().expect("try_wait 실패");
+    let _ = child.kill();
+    let _ = child.wait();
+    assert!(
+        early_exit.is_none(),
+        "주제 vault cwd에서 --no-fallback이 기동을 막음 (status={early_exit:?})"
+    );
+}

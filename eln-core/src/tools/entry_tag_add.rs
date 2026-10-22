@@ -56,8 +56,7 @@ impl ToolHandler for EntryTagAddHandler {
         if !already {
             entry.manifest.tags.push(tag.clone());
             entry
-                .manifest
-                .touch_and_write(&entry.dir)
+                .save_with_frontmatter()
                 .map_err(|e| ToolError::Internal(e.to_string()))?;
             let event = format!("entry.tag.added.{id}.{tag}");
             let _ = append_sync_event(vault_root, &event, Some(&id.to_string()));
